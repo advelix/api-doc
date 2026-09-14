@@ -1,0 +1,15 @@
+api-doc
+Copyright 2026 the api-doc authors
+
+This product includes software developed by the Smart-doc project
+(https://gitee.com/shalousun/smart-doc).
+
+api-doc is an independent project that wraps the Smart-doc parsing engine
+(com.ly.smart-doc:smart-doc) through its public API only. The Smart-doc
+library is used unmodified and is distributed under the Apache License 2.0.
+
+This project is NOT an official product of the Smart-doc project, and its
+authors have no affiliation with, or endorsement by, the Smart-doc project.
+
+Distribution of this project, including its dependencies, is subject to the
+terms of the Apache License 2.0 (see the LICENSE file).

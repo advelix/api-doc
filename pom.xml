@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>io.github.advelix</groupId>
+  <artifactId>api-doc-maven-plugin</artifactId>
+  <version>1.0.0</version>
+  <packaging>maven-plugin</packaging>
+
+  <name>api-doc</name>
+  <description>
+    api-doc is an independent Maven plugin that wraps the Smart-doc parsing engine
+    (com.ly.smart-doc:smart-doc) to generate OpenAPI JSON from Java source and Javadoc comments.
+    api-doc is a standalone project and is NOT an official Smart-doc product;
+    Smart-doc is a trademark of its respective owner and is used here for attribution only.
+  </description>
+  <inceptionYear>2026</inceptionYear>
+
+  <url>https://github.com/advelix/api-doc</url>
+
+  <developers>
+    <developer>
+      <id>advelix</id>
+      <name>Advelix</name>
+      <email>dev.advelix@gmail.com</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <url>https://github.com/advelix/api-doc</url>
+    <connection>scm:git:https://github.com/advelix/api-doc.git</connection>
+    <developerConnection>scm:git:https://github.com/advelix/api-doc.git</developerConnection>
+    <tag>1.0.0</tag>
+  </scm>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <prerequisites>
+    <!-- Smart-doc 3.1.2 requires Maven 3.8+ and JDK 1.8+. -->
+    <maven>${maven.version}</maven>
+  </prerequisites>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <!-- Compile level: JDK 1.8, the minimum supported by Smart-doc 3.1.2. -->
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+
+    <!-- Compile against the oldest Maven we support (Maven 3.8+), per Maven plugin best practice. -->
+    <maven.version>3.8.6</maven.version>
+    <maven-plugin-tools.version>3.15.1</maven-plugin-tools.version>
+    <smart-doc.version>3.1.2</smart-doc.version>
+    <spring.version>5.3.39</spring.version>
+    <poi.version>5.2.5</poi.version>
+
+    <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+    <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
+    <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+    <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+
+    <junit.version>5.11.4</junit.version>
+    <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+    <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+    <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
+    <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
+    <!-- GPG signing key fingerprint for Maven Central publishing (Advelix release key). -->
+    <gpg.keyname>44E394C2855CE18D</gpg.keyname>
+  </properties>
+
+  <dependencies>
+    <!--
+      Underlying parsing engine, used through its public API only (no source modification).
+      Licensed under the Apache License 2.0; see NOTICE for attribution.
+    -->
+    <dependency>
+      <groupId>com.ly.smart-doc</groupId>
+      <artifactId>smart-doc</artifactId>
+      <version>${smart-doc.version}</version>
+    </dependency>
+
+    <!--
+      Maven plugin framework. All provided by the Maven runtime at execution time.
+      Note: in Maven 3.x the org.apache.maven.project.MavenProject class is shipped inside
+      maven-core; the legacy Maven 2 artifact org.apache.maven:maven-project must NOT be used
+      here because it would shadow Maven 3 classes and break the plugin at runtime.
+    -->
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>${maven.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>${maven.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>${maven-plugin-tools.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!--
+      Excel writer for the api-doc:excel goal. Transitive dependencies (poi,
+      poi-ooxml-lite, xmlbeans, commons-compress, commons-io, commons-codec, commons-math3,
+      log4j-api, ...) are resolved by Maven and are intentionally not declared here.
+    -->
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>${poi.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Test-only: the CombinedAnnotationResolver fixtures reference Spring MVC annotations. -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <!-- Ship the license and attribution files inside the produced artifact. -->
+      <resource>
+        <directory>${project.basedir}</directory>
+        <includes>
+          <include>LICENSE</include>
+          <include>NOTICE</include>
+        </includes>
+        <targetPath>META-INF</targetPath>
+      </resource>
+    </resources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${maven-enforcer-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-build-environment</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>[3.8,)</version>
+                  <message>api-doc requires Maven 3.8 or higher (Smart-doc 3.1.2 requirement).</message>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>[1.8,)</version>
+                  <message>api-doc requires JDK 1.8 or higher (Smart-doc 3.1.2 requirement).</message>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+          <compilerArgs>
+            <!-- Building on JDK 9+ would otherwise warn about the obsolete 1.8 source/target. -->
+            <arg>-Xlint:-options</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>${maven-plugin-tools.version}</version>
+        <configuration>
+          <!-- Makes "mvn api-doc:<goal>" (e.g. api-doc:openapi) resolve to this plugin. -->
+          <goalPrefix>api-doc</goalPrefix>
+          <requiredJavaVersion>1.8</requiredJavaVersion>
+          <requiredMavenVersion>3.8</requiredMavenVersion>
+        </configuration>
+        <executions>
+          <execution>
+            <id>default-descriptor</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>descriptor</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>generate-help-mojo</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>helpmojo</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire-plugin.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${maven-jar-plugin.version}</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Implementation-Title>${project.name}</Implementation-Title>
+              <Implementation-Version>${project.version}</Implementation-Version>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+    <!--
+      Central publishing profile: uploads the already-built, signed artifacts
+      (main + sources + javadoc) to Maven Central via the central portal.
+      Requires ~/.central/credentials containing "token=..." from central.sonatype.com.
+      Activate with: mvn -P central clean verify org.sonatype.central:central-publishing-maven-plugin:publish
+    -->
+  <profiles>
+    <profile>
+      <id>central</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>${central-publishing-maven-plugin.version}</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>${maven-source-plugin.version}</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${maven-javadoc-plugin.version}</version>
+            <configuration>
+              <doclint>none</doclint>
+              <quiet>true</quiet>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${maven-gpg-plugin.version}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <configuration>
+                  <keyname>${gpg.keyname}</keyname>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

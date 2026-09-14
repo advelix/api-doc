@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>io.github.advelix</groupId>
+  <artifactId>spring-api</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>api-doc example: spring-api</name>
+  <description>Spring MVC example for the api-doc plugin (standard annotations + combined custom annotations).</description>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>5.3.39</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>5.3.39</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>5.3.39</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>io.github.advelix</groupId>
+        <artifactId>api-doc-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <configuration>
+          <serverUrl>https://api.example.com</serverUrl>
+          <projectName>Spring API Example</projectName>
+          <!--
+            组合注解只需列出全限定名：entry/mapping 分类、HTTP 方法、path 属性等
+            全部由插件从注解定义自动推导（@ApiController/@GetApi/@PostApi 为固定方法
+            注解；@RequestApi 自带 method 属性，HTTP 方法在使用处指定单值/多值）。
+            删除本配置项则回到仅识别标准 Spring 注解的行为（只有 UserController
+            生成文档）。
+          -->
+          <customAnnotations>
+            <annotations>
+              <annotation>io.github.advelix.demo.annotation.combine.ApiController</annotation>
+              <annotation>io.github.advelix.demo.annotation.combine.GetApi</annotation>
+              <annotation>io.github.advelix.demo.annotation.combine.PostApi</annotation>
+              <annotation>io.github.advelix.demo.annotation.combine.RequestApi</annotation>
+            </annotations>
+          </customAnnotations>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
