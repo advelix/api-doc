@@ -58,7 +58,7 @@
 
     <!-- Compile against the oldest Maven we support (Maven 3.8+), per Maven plugin best practice. -->
     <maven.version>3.8.6</maven.version>
-    <maven-plugin-tools.version>3.15.1</maven-plugin-tools.version>
+    <maven-plugin-tools.version>3.16.0</maven-plugin-tools.version>
     <smart-doc.version>3.1.2</smart-doc.version>
     <spring.version>5.3.39</spring.version>
     <poi.version>5.2.5</poi.version>
