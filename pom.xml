@@ -71,7 +71,7 @@
     <junit.version>5.11.4</junit.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
     <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
-    <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
+    <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
     <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
     <!-- GPG signing key fingerprint for Maven Central publishing (Advelix release key). -->
     <gpg.keyname>44E394C2855CE18D</gpg.keyname>
