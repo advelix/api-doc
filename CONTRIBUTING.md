@@ -116,13 +116,14 @@
 - 公开仓库，默认分支 `main`；
 - 仓库描述与 topics：`maven`、`maven-plugin`、`java`、`openapi`、`api-documentation`、`smart-doc`；
 - Dependabot：`.github/dependabot.yml`（Maven 生态，根模块与 `examples/spring-api`，每周）；
-- 不配置 branch protection、CODEOWNERS、issue/PR 模板、release 模板；
+- main 配置 branch protection：禁止直接 push、禁止 force-push，
+  一切改动经 PR 合入；CODEOWNERS、issue/PR 模板、release 模板
   出现外部贡献者后再按需添加。
 
 #### 日常
 
-- 小改动直接进 `main`；有独立性的工作开短命分支（`feat/xxx`、`fix/xxx`），
-  合并后立即删除；
+- 所有改动都走短命分支（`feat/xxx`、`fix/xxx`）+ PR，
+  合并后立即删除分支；
 - 提交信息：英文、祈使句、一句话说清（如 `Fix pom scm connection scheme`）；
 - `main` 上禁止 force-push；
 - issue 标签按需创建，起步：`bug`、`enhancement`、`documentation`；

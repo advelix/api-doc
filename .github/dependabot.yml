@@ -4,7 +4,24 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      # JUnit 6 要求 JDK 17+，本项目支持 JDK 1.8+，留在 5.11.x 线
+      - dependency: "org.junit.jupiter:junit-jupiter"
+        versions: ["6.x", "7.x"]
+      # maven.version 同时是 <prerequisites> 的最低版本，保持 3.8.x 基线
+      - dependency: "org.apache.maven:maven-plugin-api"
+        versions: ["3.9.x"]
+      - dependency: "org.apache.maven:maven-core"
+        versions: ["3.9.x"]
   - package-ecosystem: "maven"
     directory: "/examples/spring-api"
     schedule:
       interval: "weekly"
+    ignore:
+      # Spring 6/7 要求 JDK 17+，example 目标是 1.8，留在 5.3.x
+      - dependency: "org.springframework:spring-beans"
+        versions: ["[6.0.0,)"]
+      - dependency: "org.springframework:spring-web"
+        versions: ["[6.0.0,)"]
+      - dependency: "org.springframework:spring-context"
+        versions: ["[6.0.0,)"]

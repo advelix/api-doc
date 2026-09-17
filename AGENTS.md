@@ -71,11 +71,11 @@ Smart-doc sources, only call public API.
 
 ## Git & GitHub
 
-- Default branch is `main`; never force-push to it.
+- Default branch is `main`; it is branch-protected: no direct pushes,
+  no force-pushes. Every change, including small ones, lands through a
+  short-lived `feat/`/`fix/` branch opened as a PR, deleted after merge.
 - Commit messages: English, imperative, one sentence
   (e.g. `Fix pom scm connection scheme`).
-- Small changes go straight to `main`; larger work uses short-lived
-  `feat/`/`fix/` branches, deleted after merge.
 - GitHub releases carry notes only (copy the `CHANGELOG.md` entry); never
   upload artifacts — the jar lives on Maven Central.
 - Dependabot PRs (`.github/dependabot.yml`, Maven, weekly) are dependency
